@@ -37,32 +37,44 @@ public class Cell {
 		this.number = 0;
 		this.uncovered = false;
 	}
+	
 	public void display(){
-		if (this.getUncovered().equals(true)){
-    		if (this.getMine().equals(true)){
+		if (this.getUncovered()){
+    		if (this.getMine()){
     			System.out.print("M"+" ");
-    		} else if (this.getFlag().equals(true)){
-    			System.out.print("F"+" ");
     		} else {
-    		System.out.print(this.getNumber()+" "); }
+    		System.out.print(this.getNumber()+" ");
+    		}
+		} else if (this.getFlag()){
+			System.out.print("F"+" ");
     	} else {
     		System.out.print("-"+" ");
     	}
 	}
+	
 	public void displayInternal(){
 		if (this.getMine().equals(true)){
 			System.out.print("M"+" ");
-		} else if (this.getFlag().equals(true)){
-			System.out.print("F"+" ");
 		} else {
 		System.out.print(this.getNumber()+" "); 
 		}
 	}
+	
 	public void displayRaw(){
 		if (this.getMine().equals(true)){
     		System.out.print(1+" ");
     	} else {
     		System.out.print(0+" ");
+    	}
+	}
+	
+	public void displayLoser(){
+		if (this.getMine()){
+			System.out.print("M"+" ");
+		} else if (this.getUncovered()){
+    		System.out.print(this.getNumber()+" ");
+    	} else {
+    		System.out.print("-"+" ");
     	}
 	}
 }

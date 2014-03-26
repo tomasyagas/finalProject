@@ -11,22 +11,34 @@ public class MinesweeperImpl {
 	
     private Cell mat[][];
     private int[][] binaryGrid;
-    private int uncoveredCells = 0;
+    boolean gameOver = false;
+    boolean uncoveredMine = false;
+    int row;
+    int col;
+    int mines;
+    int totalCells;
+    int cellsToUncover;
     
-    public void load() {
-        int row= 3;
-        int col= 4;
-        int mines = 3;
+    public MinesweeperImpl(int row, int col) {
+		this.row = row;
+		this.col = col;
+		this.mines = row*col*15/100;
+		totalCells = row*col;
+		cellsToUncover = totalCells-mines;
+		this.load();
+	}
+
+	public void load() {
         
         mat = new Cell[row][col];
-        
+        //load cells
         for(int f=0;f<mat.length;f++) {
             for(int c=0;c<mat[f].length;c++) {
             	Cell celda = new Cell();
             	mat[f][c] = celda;
             }
         }
-        
+        //load mines in the grid
         Random rand = new Random();
         for (int m=0;m<mines;m++){
         	int rowMine = rand.nextInt(row);
@@ -41,24 +53,28 @@ public class MinesweeperImpl {
         binaryGrid = new int[row][col];
         this.loadBinaryGrid();
         
+        //load numbers in the grid
         for(int f=0;f<mat.length;f++) {
             for(int c=0;c<mat[f].length;c++) {
-            	Stack<CellPosition> positions = this.searchPosition(f,c);
+            	if (!mat[f][c].getMine()) {
+            	Stack<CellPosition> positions = this.nearPositions(f,c);
             	int number = 0;
             	while (!positions.empty()) {
             		CellPosition pos = positions.pop();
-            		if ((pos.getRow()>=0)&&(pos.getCol()>=0)&&(pos.getRow()<mat.length)&&(pos.getCol()<mat[f].length)){
+            		if (isValidPosition(pos.getRow(),pos.getCol())){
             			if (this.mat[pos.getRow()][pos.getCol()].getMine()){
                 			number++;
                 		}
             		}
             	}
             	this.mat[f][c].setNumber(number);
+            	}
             }
         }
     }
     
-    private Stack<CellPosition> searchPosition(int f, int c) {
+	//return a stack with the positions near to the pos
+    private Stack<CellPosition> nearPositions(int f, int c) {
     	Stack<CellPosition>pila = new Stack<CellPosition>();
 		int a = f+1;
 		int b = c+1;
@@ -88,6 +104,14 @@ public class MinesweeperImpl {
     	return pila;
 	}
 
+    public boolean isValidPosition(int row, int col){
+    	if ((row>=0)&&(col>=0)&&(row<this.row)&&(col<this.col)){
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
     public void loadBinaryGrid(){
     	for(int f=0;f<mat.length;f++) {
             for(int c=0;c<mat[f].length;c++) {
@@ -127,6 +151,15 @@ public class MinesweeperImpl {
         }
     }
     
+    public void displayLoser(){
+    	for(int f=0;f<mat.length;f++) {
+            for(int c=0;c<mat[f].length;c++) {
+            	mat[f][c].displayLoser();
+            }
+            System.out.println();
+        }
+    }
+    
     public void displayBinaryGrid() {
     	for(int f=0;f<binaryGrid.length;f++) {
             for(int c=0;c<binaryGrid[f].length;c++) {
@@ -138,33 +171,52 @@ public class MinesweeperImpl {
     
     public void uncover(int row, int col){
     	mat[row][col].setUncovered(true);
-    	this.uncoveredCells++;
+    	cellsToUncover = cellsToUncover -1;
     	if (mat[row][col].getNumber()==0){
-    		MatrixUtils matrix = new MatrixUtils();
-    		Set<Matrix2DCellPosition> setApplyUncover = matrix.cascade(this.binaryGrid ,row, col);
+    		cellsToUncover = cellsToUncover +1;
+    		Set<Matrix2DCellPosition> setApplyUncover = MatrixUtils.cascade(this.binaryGrid ,row, col);
     		for (Matrix2DCellPosition m:setApplyUncover) {
     			int colAux = m.getColumn();
     			int rowAux = m.getRow();
     			mat[rowAux][colAux].setUncovered(true);
-    			this.uncoveredCells++;
+    			cellsToUncover = cellsToUncover -1;
     		}
+    	}
+    	if (thereIsMine(row,col)){
+    		gameOver = true;
+    		uncoveredMine = true;
     	}
     }
     
-    public static void main(String[] args) {
-        MinesweeperImpl game=new MinesweeperImpl();
-        game.load();
-        game.display();
-        System.out.println();
-        game.displayInternal();
-        System.out.println();
-        game.displayRaw();
-        System.out.println();
-        System.out.println(game.mat.length);
-        System.out.println();
-        game.displayBinaryGrid();
-        System.out.println();
-        game.uncover(0, 0);
-        game.display();
+    public boolean thereIsMine(int row, int col) {
+		if (mat[row][col].getMine()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void flagAsMine(int row, int col){
+    	mat[row][col].setFlag(true);
     }
+    
+    public void clearFlag(int row, int col){
+    	mat[row][col].setFlag(false);
+    }
+    
+    public boolean isGameOver(){
+    	if (0==cellsToUncover) {
+    		gameOver = true;
+    	}
+    	return gameOver;
+    }
+    
+    public boolean isWinningGame(){
+    	if (isGameOver()&&0==cellsToUncover&&!uncoveredMine){
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
 }
