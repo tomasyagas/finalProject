@@ -56,13 +56,13 @@ public class MinesweeperImpl {
         //load numbers in the grid
         for(int f=0;f<mat.length;f++) {
             for(int c=0;c<mat[f].length;c++) {
-            	if (!mat[f][c].getMine()) {
+            	if (!thereIsMine(f,c)) {
             	Stack<CellPosition> positions = this.nearPositions(f,c);
             	int number = 0;
             	while (!positions.empty()) {
             		CellPosition pos = positions.pop();
             		if (isValidPosition(pos.getRow(),pos.getCol())){
-            			if (this.mat[pos.getRow()][pos.getCol()].getMine()){
+            			if (thereIsMine(pos.getRow(),pos.getCol())){
                 			number++;
                 		}
             		}

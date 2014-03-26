@@ -53,7 +53,7 @@ public class Cell {
 	}
 	
 	public void displayInternal(){
-		if (this.getMine().equals(true)){
+		if (this.getMine()){
 			System.out.print("M"+" ");
 		} else {
 		System.out.print(this.getNumber()+" "); 
@@ -61,7 +61,7 @@ public class Cell {
 	}
 	
 	public void displayRaw(){
-		if (this.getMine().equals(true)){
+		if (this.getMine()){
     		System.out.print(1+" ");
     	} else {
     		System.out.print(0+" ");
