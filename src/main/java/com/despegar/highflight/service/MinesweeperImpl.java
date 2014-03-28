@@ -76,31 +76,19 @@ public class MinesweeperImpl {
 	//return a stack with the positions near to the pos
     private Stack<CellPosition> nearPositions(int f, int c) {
     	Stack<CellPosition>pila = new Stack<CellPosition>();
-		int a = f+1;
-		int b = c+1;
-		CellPosition pos = new CellPosition(a,b);
-		pila.push(pos);
-    	b = c;
-    	CellPosition pos2 = new CellPosition(a, b);
-    	pila.push(pos2);
-    	b = c-1;
-    	CellPosition pos3 = new CellPosition(a, b);
-    	pila.push(pos3);
-    	a = f;
-    	CellPosition pos4 = new CellPosition(a,b);
-    	pila.push(pos4);
-    	a = f-1;
-    	CellPosition pos5 = new CellPosition(a, b);
-    	pila.push(pos5);
-    	b = c;
-    	CellPosition pos6 = new CellPosition(a, b);
-    	pila.push(pos6);
-    	b = c+1;
-    	CellPosition pos7 = new CellPosition(a, b);
-    	pila.push(pos7);
-    	a = f;
-    	CellPosition pos8 = new CellPosition(a, b);
-    	pila.push(pos8);
+    	int a, b;
+		for (int p=1;p<9;p++){
+			switch (p) {
+			case 1: a= f+1; b = c+1;  CellPosition pos = new CellPosition(a,b); pila.push(pos); break;
+			case 2: a= f+1; b = c;  CellPosition pos2 = new CellPosition(a,b); pila.push(pos2); break;
+			case 3: a= f+1; b = c-1;  CellPosition pos3 = new CellPosition(a,b); pila.push(pos3); break;
+			case 4: a= f; b = c-1;  CellPosition pos4 = new CellPosition(a,b); pila.push(pos4); break;
+			case 5: a= f-1; b = c-1;  CellPosition pos5 = new CellPosition(a,b); pila.push(pos5); break;
+			case 6: a= f-1; b = c;  CellPosition pos6 = new CellPosition(a,b); pila.push(pos6); break;
+			case 7: a= f-1; b = c+1;  CellPosition pos7 = new CellPosition(a,b); pila.push(pos7); break;
+			case 8: a= f; b = c+1;  CellPosition pos8 = new CellPosition(a,b); pila.push(pos8); break;
+			}
+		}
     	return pila;
 	}
 
@@ -170,16 +158,19 @@ public class MinesweeperImpl {
     }
     
     public void uncover(int row, int col){
-    	mat[row][col].setUncovered(true);
-    	cellsToUncover = cellsToUncover -1;
+    	if (!mat[row][col].getUncovered()) {
+    		mat[row][col].setUncovered(true);
+    		cellsToUncover = cellsToUncover -1;
+    	}
     	if (mat[row][col].getNumber()==0){
-    		cellsToUncover = cellsToUncover +1;
     		Set<Matrix2DCellPosition> setApplyUncover = MatrixUtils.cascade(this.binaryGrid ,row, col);
     		for (Matrix2DCellPosition m:setApplyUncover) {
     			int colAux = m.getColumn();
     			int rowAux = m.getRow();
+    			if (!mat[rowAux][colAux].getUncovered()) {
     			mat[rowAux][colAux].setUncovered(true);
     			cellsToUncover = cellsToUncover -1;
+    			}
     		}
     	}
     	if (thereIsMine(row,col)){
