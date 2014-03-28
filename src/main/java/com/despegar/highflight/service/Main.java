@@ -8,22 +8,22 @@ public class Main {
         String move;
         int row;
         int col;
-        System.out.println("Bienvenido al juego, ingrese el tamaño del que desea su grilla");
-        System.out.println("Cantidad de filas: ");
+        System.out.println("Welcome! Please, enter the size you want your grid:");
+        System.out.println("Number of rows: ");
         row = scan.nextInt();
-        System.out.println("Cantidad de columnas: ");
+        System.out.println("Number of columns: ");
         col = scan.nextInt();
         MinesweeperImpl game = new MinesweeperImpl(row, col);
         game.display();
-        System.out.println("La cantidad de minas es: "+game.mines);
+        System.out.println("The number of mines is: "+game.mines);
         while (!game.isGameOver()){
         	System.out.println();
-        	System.out.println("Seleccione un movimiento: U (uncover), F (flag) , C (clear flag):");
+        	System.out.println("Select a move: U (uncover), F (flag) , C (clear flag):");
         	move = scan.next();
-        	System.out.println("En qué celda desea realizarlo?");
-        	System.out.println("Numero de fila: ");
+        	System.out.println("Where?");
+        	System.out.println("Number of row: ");
         	row = scan.nextInt()-1;
-        	System.out.println("Numero de columna: ");
+        	System.out.println("Number of column: ");
         	col = scan.nextInt()-1;
         	switch (move.charAt(0)) {
         	case 'u': game.uncover(row, col); break;
@@ -34,9 +34,9 @@ public class Main {
         	System.out.println();
         }
         if (game.isWinningGame()){
-        	System.out.println("GANASTEEEE!");
+        	System.out.println("You are THE Winner!");
         } else {
-        	System.out.println("Perdiste loser ;)");
+        	System.out.println("You are a loser ;)");
         	game.displayLoser();
         }
 	}
